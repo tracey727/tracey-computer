@@ -1,0 +1,17 @@
+{
+  "name": "GENEVIEVE Super Response",
+  "short_name": "Super Response",
+  "description": "Ask multiple AI providers and combine their strongest answers.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff8fa",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "/assets/ga-mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

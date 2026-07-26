@@ -1,0 +1,35 @@
+GENEVIEVE SUPER RESPONSE v1.6 — DEPLOY THIS VERSION
+===================================================
+
+THE 404 FIX IS INCLUDED.
+
+Before deploying, open your GitHub repository and confirm the FIRST PAGE shows:
+
+  package.json
+  vercel.json
+  index.html
+  public
+  api
+  lib
+  scripts
+
+If GitHub only shows one folder named GENEVIEVE-Super-Response-v1.6, the files are still one level too deep.
+Open that folder, select all contents, and place those contents at the repository root.
+
+VERCEL SETTINGS
+---------------
+Framework Preset: Other
+Root Directory: leave blank (repository root)
+Build Command: npm run build
+Output Directory: public
+Install Command: npm ci --ignore-scripts
+
+ENVIRONMENT VARIABLES TO ADD IN VERCEL
+--------------------------------------
+OPENAI_API_KEY
+ANTHROPIC_API_KEY
+GEMINI_API_KEY
+APP_ACCESS_CODE
+
+Add each variable to Production and Preview, then REDEPLOY.
+Never paste API keys into GitHub files.

@@ -1,0 +1,18 @@
+GENEVIEVE SUPER RESPONSE v1.6 — START HERE
+
+1. Extract this ZIP into a NEW folder.
+2. Double-click START-GENEVIEVE.bat.
+3. Wait for the browser to open by itself.
+4. Paste at least one API key into the matching box.
+5. Click Save keys & test connections.
+6. When READY appears, ask your question.
+
+DO NOT type localhost.
+DO NOT open index.html.
+DO NOT put API keys into GitHub.
+
+Optional:
+- CREATE-DESKTOP-SHORTCUT.bat creates a desktop icon.
+- STOP-GENEVIEVE.bat closes the local server.
+- PUBLISH-TO-GITHUB.bat creates/pushes the private repository.
+- DEPLOY-TO-VERCEL.bat uploads server secrets, deploys, and verifies the live routes.

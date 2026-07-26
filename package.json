@@ -1,0 +1,28 @@
+{
+  "name": "genevieve-super-response",
+  "version": "1.6.0",
+  "private": true,
+  "description": "Secure one-click multi-model AI panel for OpenAI, Anthropic and Google Gemini, with synthesis, cross-review and GitHub/Vercel deployment checks.",
+  "type": "module",
+  "engines": {
+    "node": ">=20 <25"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node server.mjs",
+    "test": "node --test",
+    "check": "node scripts/check.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "verify": "npm run build && npm test && npm run check && npm run smoke",
+    "build": "node scripts/build.mjs",
+    "vercel-build": "npm run build"
+  },
+  "keywords": [
+    "multi-model",
+    "openai",
+    "anthropic",
+    "gemini",
+    "vercel"
+  ],
+  "license": "UNLICENSED"
+}

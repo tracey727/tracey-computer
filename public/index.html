@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#111111" />
+  <meta name="description" content="Ask OpenAI, Claude and Gemini together, then combine their strongest answers." />
+  <title>GENEVIEVE Super Response</title>
+  <link rel="icon" href="/assets/ga-mark.svg" type="image/svg+xml" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="background-glow glow-one"></div>
+  <div class="background-glow glow-two"></div>
+
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="GENEVIEVE Super Response home">
+      <img src="/assets/ga-mark.svg" alt="GENEVIEVE App emblem" />
+      <span><strong>GENEVIEVE</strong><small>SUPER RESPONSE</small></span>
+    </a>
+    <div class="topbar-actions">
+      <a class="setup-link" href="#api-setup">API setup</a>
+      <div id="connectionBadge" class="connection-badge">Checking setup…</div>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero">
+      <div class="eyebrow">THREE PERSPECTIVES · ONE STRONGER ANSWER</div>
+      <h1>Ask once.<br /><span>Compare intelligently.</span></h1>
+      <p>Connect your own API accounts, send one question to all available providers, then receive one reviewed Super Best Answer.</p>
+    </section>
+
+    <section id="api-setup" class="api-setup-card" aria-labelledby="api-setup-heading">
+      <div class="section-heading">
+        <div><span class="step-number">01</span><h2 id="api-setup-heading">Connect your API keys</h2></div>
+        <span id="setupModeBadge" class="mode-badge">Checking…</span>
+      </div>
+
+      <div id="localSetupPanel" class="hidden">
+        <p class="setup-intro">Paste each provider key below. The server saves it only in the private <code>.env.local</code> file on this computer. Saved keys are never displayed again.</p>
+
+        <form id="apiSettingsForm" autocomplete="off">
+          <div class="key-grid">
+            <label class="key-field">
+              <span><strong>OpenAI API key</strong><em id="openaiSetupState">Not saved</em></span>
+              <input id="openaiKey" name="OPENAI_API_KEY" type="password" spellcheck="false" autocomplete="off" placeholder="Paste OpenAI API key" />
+              <small>Create it in <a href="https://platform.openai.com/api-keys" target="_blank" rel="noreferrer">OpenAI API Keys</a>. ChatGPT Plus is separate from API billing.</small>
+            </label>
+
+            <label class="key-field">
+              <span><strong>Claude API key</strong><em id="anthropicSetupState">Not saved</em></span>
+              <input id="anthropicKey" name="ANTHROPIC_API_KEY" type="password" spellcheck="false" autocomplete="off" placeholder="Paste Anthropic API key" />
+              <small>Create it in the <a href="https://platform.claude.com/settings/keys" target="_blank" rel="noreferrer">Claude Platform</a>.</small>
+            </label>
+
+            <label class="key-field">
+              <span><strong>Gemini API key</strong><em id="geminiSetupState">Not saved</em></span>
+              <input id="geminiKey" name="GEMINI_API_KEY" type="password" spellcheck="false" autocomplete="off" placeholder="Paste Gemini API key" />
+              <small>Create it in <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer">Google AI Studio</a>.</small>
+            </label>
+          </div>
+
+          <div class="setup-options-row">
+            <label class="show-keys"><input id="showApiKeys" type="checkbox" /> Show keys while typing</label>
+            <span>Leave a key box blank to keep the saved value.</span>
+          </div>
+
+          <details class="advanced-settings">
+            <summary>Advanced connection settings</summary>
+            <div class="advanced-grid">
+              <label>OpenAI model<input id="openaiModelSetting" name="OPENAI_MODEL" type="text" value="gpt-5.6-luna" /></label>
+              <label>Claude model<input id="anthropicModelSetting" name="ANTHROPIC_MODEL" type="text" value="claude-sonnet-5" /></label>
+              <label>Gemini model<input id="geminiModelSetting" name="GEMINI_MODEL" type="text" value="gemini-3.5-flash" /></label>
+              <label>Final editor
+                <select id="setupSynthesisProvider" name="SYNTHESIS_PROVIDER">
+                  <option value="auto">Automatic best available</option>
+                  <option value="openai">OpenAI</option>
+                  <option value="anthropic">Claude</option>
+                  <option value="gemini">Gemini</option>
+                </select>
+              </label>
+              <label class="access-setting">Private app access code<input id="setupAccessCode" name="APP_ACCESS_CODE" type="password" autocomplete="new-password" placeholder="Optional locally; recommended on Vercel" /></label>
+            </div>
+          </details>
+
+          <div class="setup-actions">
+            <div>
+              <strong id="settingsSaveTitle">Ready for your keys</strong>
+              <p id="settingsSaveMessage">At least one working provider key is required.</p>
+            </div>
+            <button id="saveSettingsButton" type="submit">Save keys &amp; test connections</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="deployedSetupPanel" class="deployed-setup hidden">
+        <strong>For the live Vercel app, keys must be stored on the server.</strong>
+        <p>Open your Vercel project, go to <b>Settings → Environment Variables</b>, add the names below to Production and Preview, then redeploy. The webpage deliberately cannot store deployed API secrets.</p>
+        <div class="env-name-grid">
+          <code>OPENAI_API_KEY</code><code>ANTHROPIC_API_KEY</code><code>GEMINI_API_KEY</code><code>APP_ACCESS_CODE</code>
+        </div>
+        <a class="vercel-button" href="https://vercel.com/dashboard" target="_blank" rel="noreferrer">Open Vercel dashboard</a>
+      </div>
+    </section>
+
+    <section class="composer-card" aria-labelledby="ask-heading">
+      <div class="section-heading">
+        <div><span class="step-number">02</span><h2 id="ask-heading">Your question</h2></div>
+        <span id="characterCount" class="character-count">0 / 12,000</span>
+      </div>
+
+      <form id="questionForm">
+        <label class="sr-only" for="question">Question</label>
+        <textarea id="question" name="question" maxlength="12000" placeholder="Ask a detailed question here…" required></textarea>
+
+        <div class="settings-grid">
+          <fieldset>
+            <legend>Models to consult</legend>
+            <label class="provider-toggle openai-toggle">
+              <input type="checkbox" name="provider" value="openai" checked />
+              <span class="provider-dot">O</span><span><strong>OpenAI</strong><small id="openaiModel">Model</small></span><em id="openaiState">Checking</em>
+            </label>
+            <label class="provider-toggle anthropic-toggle">
+              <input type="checkbox" name="provider" value="anthropic" checked />
+              <span class="provider-dot">C</span><span><strong>Claude</strong><small id="anthropicModel">Model</small></span><em id="anthropicState">Checking</em>
+            </label>
+            <label class="provider-toggle gemini-toggle">
+              <input type="checkbox" name="provider" value="gemini" checked />
+              <span class="provider-dot">G</span><span><strong>Gemini</strong><small id="geminiModel">Model</small></span><em id="geminiState">Checking</em>
+            </label>
+          </fieldset>
+
+          <div class="synthesis-setting">
+            <label for="synthesisProvider">Final answer editor</label>
+            <select id="synthesisProvider" name="synthesisProvider">
+              <option value="auto">Automatic best available</option><option value="openai">OpenAI</option><option value="anthropic">Claude</option><option value="gemini">Gemini</option>
+            </select>
+            <label for="responseDepth" class="depth-label">Panel depth</label>
+            <select id="responseDepth" name="responseDepth">
+              <option value="deep" selected>Deep expert panel</option>
+              <option value="balanced">Balanced</option>
+            </select>
+            <p>Deep mode gives each provider a different expert role, combines every useful point, audits contradictions, and performs an independent final review.</p>
+          </div>
+        </div>
+
+        <div class="connection-tools">
+          <button id="testConnectionsButton" class="test-connections-button" type="button">Test API connections</button>
+          <span>Checks authentication, billing access and model availability without displaying your keys.</span>
+        </div>
+
+        <section id="diagnosticsSection" class="diagnostics-panel hidden" aria-live="polite">
+          <div class="diagnostics-heading"><strong>API connection results</strong><span id="diagnosticsSummary"></span></div>
+          <div id="diagnosticsGrid" class="diagnostics-grid"></div>
+        </section>
+
+        <div id="accessCodeWrap" class="access-code-wrap hidden">
+          <label for="accessCode">Private access code</label>
+          <input id="accessCode" type="password" autocomplete="current-password" placeholder="Enter the code set for this app" />
+          <small>This protects your provider accounts when the Vercel address is online.</small>
+        </div>
+
+        <div class="form-footer">
+          <p>Provider keys stay server-side. Each provider may charge its own API account.</p>
+          <button id="submitButton" type="submit"><span>Build Super Best Answer</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
+        </div>
+      </form>
+    </section>
+
+    <section id="progressSection" class="progress-card hidden" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div><div><strong id="progressTitle">Consulting selected models…</strong><p id="progressText">Responses run in parallel. The final synthesis begins when they finish.</p></div>
+    </section>
+
+    <section id="errorSection" class="error-card hidden" role="alert">
+      <strong id="errorTitle">Unable to create response</strong><p id="errorText"></p><div id="errorDetails" class="error-details"></div>
+    </section>
+
+    <section id="resultsSection" class="results-section hidden">
+      <div class="section-heading results-heading"><div><span class="step-number">03</span><h2>Model responses</h2></div><span id="timingLabel" class="timing-label"></span></div>
+      <div id="answerGrid" class="answer-grid"></div>
+      <article class="final-card">
+        <div class="final-card-header"><div><span class="super-label">SUPER BEST ANSWER</span><h2>Combined answer</h2><p id="finalMeta"></p></div><button id="copyButton" class="copy-button" type="button">Copy answer</button></div>
+        <div id="finalAnswer" class="response-text"></div><div id="finalWarning" class="final-warning hidden"></div>
+      </article>
+    </section>
+
+    <section class="privacy-note"><strong>Important:</strong> AI responses can be incomplete or wrong. Verify legal, medical, financial, safety and other important information with an appropriately qualified person.</section>
+  </main>
+
+  <footer><span>© 2026 Tracey Ann Kennedy · GENEVIEVE App™</span><span>v1.6 · GitHub/Vercel 404 fix · deployment ready</span></footer>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

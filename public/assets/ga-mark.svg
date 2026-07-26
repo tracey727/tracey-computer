@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-labelledby="title desc">
+  <title id="title">GENEVIEVE App emblem</title>
+  <desc id="desc">A gold letter A surrounding a centred black G.</desc>
+  <defs>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feFlood flood-color="#f8dce6" flood-opacity="0.9"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="120" height="120" rx="28" fill="#ffffff"/>
+  <g filter="url(#glow)">
+    <path d="M23 98 55 20h12l31 78H82l-8-22H47l-8 22H23Zm29-36h17L60.5 39 52 62Z" fill="#c9a227"/>
+    <rect x="42" y="67" width="37" height="8" rx="4" fill="#c9a227"/>
+    <path d="M70.5 52.5c-3.1-4-7-6-11.7-6-8.5 0-14.3 6.3-14.3 14.7 0 8.7 5.8 14.8 14.7 14.8 3.9 0 7.1-.9 9.3-2.5v-6.8H58.3v-9.3h21v21.1c-5.1 4.6-12.2 7.1-20.6 7.1-15.2 0-25.9-10-25.9-24.4 0-14.3 10.9-24.3 26-24.3 8.6 0 15.8 3.3 20.4 9l-8.7 6.6Z" fill="#111111"/>
+  </g>
+</svg>
