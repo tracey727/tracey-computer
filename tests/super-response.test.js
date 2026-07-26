@@ -280,16 +280,25 @@ test("connection diagnostics validates keys and configured model access without 
   const { runProviderDiagnostics } = await import("../lib/super-response.js");
   const mockFetch = async (url) => {
     const target = String(url);
-    if (target.includes("openai.com")) {
-      return jsonResponse({ data: [{ id: "gpt-5-mini" }, { id: "gpt-5.6-luna" }] });
+    if (target.endsWith("/v1/models")) {
+      return jsonResponse({ data: [{ id: "gpt-5-mini" }, { id: "gpt-5" }] });
     }
-    if (target.includes("anthropic.com")) {
+    if (target.endsWith("/v1/responses")) {
+      return jsonResponse({ model: "gpt-5", output_text: "OK" });
+    }
+    if (target.includes("anthropic.com/v1/models")) {
       return jsonResponse({ data: [{ id: "claude-sonnet-5" }] });
     }
-    if (target.includes("googleapis.com")) {
+    if (target.includes("anthropic.com/v1/messages")) {
+      return jsonResponse({ model: "claude-sonnet-5", content: [{ type: "text", text: "OK" }] });
+    }
+    if (target.includes("googleapis.com/v1beta/models?pageSize")) {
       return jsonResponse({
         models: [{ name: "models/gemini-3.5-flash", supportedGenerationMethods: ["generateContent"] }],
       });
+    }
+    if (target.includes("googleapis.com/v1beta/models/gemini-3.5-flash:generateContent")) {
+      return jsonResponse({ candidates: [{ content: { parts: [{ text: "OK" }] } }] });
     }
     throw new Error(`Unexpected URL: ${target}`);
   };
@@ -352,11 +361,11 @@ test("provider requests automatically recover when the configured model is unava
       if (body.model === "unavailable-model") {
         return jsonResponse({ error: { message: "model not found" } }, 404);
       }
-      assert.equal(body.model, "gpt-5.6-luna");
-      return jsonResponse({ model: "gpt-5.6-luna", output_text: "Recovered answer." });
+      assert.equal(body.model, "gpt-5");
+      return jsonResponse({ model: "gpt-5", output_text: "Recovered answer." });
     }
     if (target.endsWith("/v1/models")) {
-      return jsonResponse({ data: [{ id: "gpt-5.6-luna" }] });
+      return jsonResponse({ data: [{ id: "text-embedding-3-small" }, { id: "gpt-5" }] });
     }
     throw new Error(`Unexpected URL: ${target}`);
   };
@@ -368,7 +377,7 @@ test("provider requests automatically recover when the configured model is unava
   );
 
   assert.equal(result.final.text, "Recovered answer.");
-  assert.equal(result.answers[0].model, "gpt-5.6-luna");
+  assert.equal(result.answers[0].model, "gpt-5");
   assert.equal(result.answers[0].fallbackFromModel, "unavailable-model");
   assert.equal(responseCalls, 2);
 });
@@ -397,4 +406,26 @@ test("deep mode assigns different expert roles to provider prompts", async () =>
 
   assert.ok(prompts.some((prompt) => prompt.includes("solution architect")));
   assert.ok(prompts.some((prompt) => prompt.includes("critical reviewer")));
+});
+
+test("connection diagnostics catches billing or quota failures by making a real generation request", async () => {
+  const { runProviderDiagnostics } = await import("../lib/super-response.js");
+  const result = await runProviderDiagnostics(
+    { ...noRetry, OPENAI_API_KEY: "valid-looking-key", OPENAI_MODEL: "gpt-5" },
+    async (url) => {
+      const target = String(url);
+      if (target.endsWith("/v1/models")) {
+        return jsonResponse({ data: [{ id: "gpt-5" }] });
+      }
+      if (target.endsWith("/v1/responses")) {
+        return jsonResponse({ error: { message: "insufficient_quota" } }, 429);
+      }
+      throw new Error(`Unexpected URL: ${target}`);
+    }
+  );
+
+  const openai = result.providers.find((item) => item.provider === "openai");
+  assert.equal(openai.status, "error");
+  assert.equal(openai.error.code, "QUOTA_OR_BILLING");
+  assert.match(openai.message, /billing, quota or a rate limit/i);
 });

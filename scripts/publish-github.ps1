@@ -34,7 +34,7 @@ if (-not (Test-Path ".git")) {
   & git.exe branch -M main
 }
 & git.exe add -A
-& git.exe commit -m "GENEVIEVE Super Response v1.6 deployment-fixed build"
+& git.exe commit -m "GENEVIEVE Super Response v1.7 deployment-fixed build"
 if ($LASTEXITCODE -ne 0) {
   Write-Host "No new files needed committing, or Git requires your user name/email. Continuing to repository check."
 }

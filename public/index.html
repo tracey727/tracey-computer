@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#111111" />
   <meta name="description" content="Ask OpenAI, Claude and Gemini together, then combine their strongest answers." />
-  <title>GENEVIEVE Super Response</title>
+  <title>GENEVIEVE Super Response v1.7</title>
   <link rel="icon" href="/assets/ga-mark.svg" type="image/svg+xml" />
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="stylesheet" href="/styles.css" />
@@ -70,7 +70,7 @@
           <details class="advanced-settings">
             <summary>Advanced connection settings</summary>
             <div class="advanced-grid">
-              <label>OpenAI model<input id="openaiModelSetting" name="OPENAI_MODEL" type="text" value="gpt-5.6-luna" /></label>
+              <label>OpenAI model<input id="openaiModelSetting" name="OPENAI_MODEL" type="text" value="gpt-5" /></label>
               <label>Claude model<input id="anthropicModelSetting" name="ANTHROPIC_MODEL" type="text" value="claude-sonnet-5" /></label>
               <label>Gemini model<input id="geminiModelSetting" name="GEMINI_MODEL" type="text" value="gemini-3.5-flash" /></label>
               <label>Final editor
@@ -146,21 +146,21 @@
           </div>
         </div>
 
+        <div id="accessCodeWrap" class="access-code-wrap hidden">
+          <label for="accessCode">Private access code required</label>
+          <input id="accessCode" type="password" autocomplete="current-password" placeholder="Enter the APP_ACCESS_CODE you saved in Vercel" />
+          <small>Enter the same private code saved as APP_ACCESS_CODE in Vercel. It is remembered only for this browser session and is never displayed.</small>
+        </div>
+
         <div class="connection-tools">
-          <button id="testConnectionsButton" class="test-connections-button" type="button">Test API connections</button>
-          <span>Checks authentication, billing access and model availability without displaying your keys.</span>
+          <button id="testConnectionsButton" class="test-connections-button" type="button">Run real API connection test</button>
+          <span>This now sends a tiny real request to each provider, so it checks the key, model access, billing or quota, and the exact endpoint used by the app.</span>
         </div>
 
         <section id="diagnosticsSection" class="diagnostics-panel hidden" aria-live="polite">
           <div class="diagnostics-heading"><strong>API connection results</strong><span id="diagnosticsSummary"></span></div>
           <div id="diagnosticsGrid" class="diagnostics-grid"></div>
         </section>
-
-        <div id="accessCodeWrap" class="access-code-wrap hidden">
-          <label for="accessCode">Private access code</label>
-          <input id="accessCode" type="password" autocomplete="current-password" placeholder="Enter the code set for this app" />
-          <small>This protects your provider accounts when the Vercel address is online.</small>
-        </div>
 
         <div class="form-footer">
           <p>Provider keys stay server-side. Each provider may charge its own API account.</p>
@@ -189,7 +189,7 @@
     <section class="privacy-note"><strong>Important:</strong> AI responses can be incomplete or wrong. Verify legal, medical, financial, safety and other important information with an appropriately qualified person.</section>
   </main>
 
-  <footer><span>© 2026 Tracey Ann Kennedy · GENEVIEVE App™</span><span>v1.6 · GitHub/Vercel 404 fix · deployment ready</span></footer>
+  <footer><span>© 2026 Tracey Ann Kennedy · GENEVIEVE App™</span><span>v1.7 · API connection and model-selection fix</span></footer>
   <script type="module" src="/app.js"></script>
 </body>
 </html>

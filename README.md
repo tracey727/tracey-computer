@@ -1,4 +1,4 @@
-# GENEVIEVE Super Response v1.6
+# GENEVIEVE Super Response v1.7
 
 A secure multi-model web application for Windows, GitHub and Vercel.
 
@@ -19,19 +19,16 @@ Do not manually set an old output directory such as `dist`, `build`, or the prev
 
 It sends one question to every selected, working AI provider in parallel, gives each provider a different expert role in Deep mode, combines every useful answer, audits disagreements, and produces one final **Super Best Answer**.
 
-## What changed in v1.6
+## What changed in v1.7
 
-- One-click Windows launch. You no longer type `localhost` or any web address.
-- The launcher waits for the server to be ready before opening the browser.
-- It uses `127.0.0.1` directly, detects occupied ports, and moves automatically from port 3000 up to 3015 when needed.
-- API keys can be pasted into the app’s own secure local setup page.
-- Local keys are written only to `.env.local`, which Git ignores.
-- Model discovery and automatic fallback recover when a configured model is unavailable to your account.
-- Deep Expert Panel mode assigns different roles to OpenAI, Claude and Gemini instead of asking all three to produce near-identical answers.
-- One model synthesises every successful answer; a different available model performs a final quality review.
-- The Vercel deployment budget is capped at 60 seconds for broad Hobby/Pro compatibility.
-- GitHub and Vercel deployment assistants are included.
-- Deployment verification stops rather than falsely claiming success when a live route or provider connection fails.
+- Replaced the broken default OpenAI model name with the supported API alias `gpt-5`.
+- Added safe model selection so OpenAI can never fall back to an embedding, audio, image or other incompatible model.
+- The connection tester now sends a tiny real generation request to every provider. It therefore detects invalid keys, missing billing/credits, quota limits, blocked permissions and unavailable models instead of merely reporting that a key exists.
+- The private `APP_ACCESS_CODE` field now appears before the connection-test button and the app refuses to test or submit until it is entered.
+- Provider cards now show **Configured — not tested** until the real test succeeds, then change to **Ready**.
+- Automatic model fallback reports the actual working model and continues with it.
+- The service-worker cache version was increased so phones and browsers replace the older broken JavaScript after redeployment.
+- The GitHub/Vercel 404 protections from v1.6 remain in place.
 
 ## Start on your Windows computer
 
@@ -88,7 +85,7 @@ The connection tester lists models available to each API account. When a locally
 Current defaults:
 
 ```env
-OPENAI_MODEL=gpt-5.6-luna
+OPENAI_MODEL=gpt-5
 ANTHROPIC_MODEL=claude-sonnet-5
 GEMINI_MODEL=gemini-3.5-flash
 ```

@@ -22,6 +22,7 @@ const diagnosticsSection = document.querySelector("#diagnosticsSection");
 const diagnosticsGrid = document.querySelector("#diagnosticsGrid");
 const diagnosticsSummary = document.querySelector("#diagnosticsSummary");
 const errorDetails = document.querySelector("#errorDetails");
+let appRequiresAccessCode = false;
 
 const apiSettingsForm = document.querySelector("#apiSettingsForm");
 const localSetupPanel = document.querySelector("#localSetupPanel");
@@ -94,6 +95,15 @@ function showError(message, answers = []) {
     errorDetails.append(item);
   }
   errorSection.classList.remove("hidden");
+}
+
+
+function ensureAccessCode() {
+  if (!appRequiresAccessCode || accessCodeInput.value.trim()) return true;
+  showError("Enter the private APP_ACCESS_CODE before testing connections or asking a question.");
+  accessCodeWrap.scrollIntoView({ behavior: "smooth", block: "center" });
+  accessCodeInput.focus();
+  return false;
 }
 
 function clearOutput() {
@@ -190,6 +200,7 @@ function renderDiagnostics(data) {
     if (elements) {
       elements.state.textContent = result.status === "ready" ? "Ready" : result.status === "missing" ? "Key needed" : "Check setup";
       elements.state.className = result.status === "ready" ? "configured" : "missing";
+      if (result.model) elements.model.textContent = result.model;
       if (result.status !== "ready") elements.checkbox.checked = false;
       if (result.status === "ready") elements.checkbox.checked = true;
     }
@@ -259,19 +270,22 @@ async function loadHealth() {
     for (const [provider, elements] of Object.entries(providerElements)) {
       const configured = health.configuredProviders[provider];
       elements.model.textContent = health.models[provider];
-      elements.state.textContent = configured ? "Key found" : "Key needed";
+      elements.state.textContent = configured ? "Configured — not tested" : "Key needed";
       elements.state.className = configured ? "configured" : "missing";
       elements.checkbox.checked = configured;
     }
 
-    accessCodeWrap.classList.toggle("hidden", !health.accessCodeRequired);
+    appRequiresAccessCode = Boolean(health.accessCodeRequired);
+    accessCodeWrap.classList.toggle("hidden", !appRequiresAccessCode);
     document.querySelector("#synthesisProvider").value = health.preferredSynthesisProvider || "auto";
     document.querySelector("#responseDepth").value = health.defaultResponseDepth || "deep";
 
     if (configuredCount > 0) {
-      connectionBadge.textContent = `${configuredCount} key${configuredCount === 1 ? "" : "s"} found · test connections`;
-      connectionBadge.classList.add("ready");
-      connectionBadge.classList.remove("warning");
+      connectionBadge.textContent = appRequiresAccessCode
+        ? `${configuredCount} key${configuredCount === 1 ? "" : "s"} configured · enter code and test`
+        : `${configuredCount} key${configuredCount === 1 ? "" : "s"} configured · run real test`;
+      connectionBadge.classList.remove("ready");
+      connectionBadge.classList.add("warning");
     } else {
       connectionBadge.textContent = "Add API keys to begin";
       connectionBadge.classList.add("warning");
@@ -341,6 +355,8 @@ showApiKeys?.addEventListener("change", () => {
 });
 
 testConnectionsButton.addEventListener("click", async () => {
+  clearOutput();
+  if (!ensureAccessCode()) return;
   testConnectionsButton.disabled = true;
   testConnectionsButton.textContent = "Testing connections…";
   diagnosticsSection.classList.add("hidden");
@@ -358,7 +374,7 @@ testConnectionsButton.addEventListener("click", async () => {
     showError(error?.message || "Unable to test API connections.");
   } finally {
     testConnectionsButton.disabled = false;
-    testConnectionsButton.textContent = "Test API connections";
+    testConnectionsButton.textContent = "Run real API connection test";
   }
 });
 
@@ -369,6 +385,8 @@ questionInput.addEventListener("input", () => {
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   clearOutput();
+
+  if (!ensureAccessCode()) return;
 
   const providers = [...document.querySelectorAll('input[name="provider"]:checked')].map((input) => input.value);
   if (!providers.length) {

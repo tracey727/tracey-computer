@@ -1,6 +1,6 @@
 {
   "name": "genevieve-super-response",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "private": true,
   "description": "Secure one-click multi-model AI panel for OpenAI, Anthropic and Google Gemini, with synthesis, cross-review and GitHub/Vercel deployment checks.",
   "type": "module",

@@ -15,7 +15,7 @@ test("local API setup saves secrets without returning them", async () => {
         ANTHROPIC_API_KEY: "anthropic-secret",
         GEMINI_API_KEY: "gemini-secret",
         APP_ACCESS_CODE: "private-code",
-        OPENAI_MODEL: "gpt-5.6-luna",
+        OPENAI_MODEL: "gpt-5",
       },
       { root, env }
     );

@@ -1,4 +1,4 @@
-# GENEVIEVE Super Response v1.6 — Deployment Checklist
+# GENEVIEVE Super Response v1.7 — Deployment Checklist
 
 ## Local acceptance
 
