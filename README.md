@@ -1,3 +1,5 @@
+> **Historical web-lineage build (v1.7).** `tracey-computer` is the retained canonical copy of this exact 55-file package; `Gen-Trace-Computer` is byte-for-byte identical and reference-only. Latest Super Response web-lineage source: [genevieve-super-response.](https://github.com/tracey727/genevieve-super-response.). Preserve this repository for provenance and recovery; its Vercel deployment material is historical.
+
 # GENEVIEVE Super Response v1.7
 
 A secure multi-model web application for Windows, GitHub and Vercel.
